@@ -1,12 +1,12 @@
 import axios from "axios";
+import { AuthService } from "../services/AuthService";
 
 const axiosInstance = axios.create({
   baseURL: "https://jsonplaceholder.typicode.com",
 });
 
 axiosInstance.interceptors.request.use((config => {
-  //TODO: BUSCR FORMA DE PERSISTIR EL TOKEN, MIENTRAS USO LOCALSTORAGE
-  const token  = localStorage.getItem("token")
+  const token  = AuthService.getToken();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -1,16 +1,22 @@
-import { createContext, useState, ReactNode, useContext } from "react";
-import type { AuthCointextType } from "../types/global";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { AuthService } from "../services/AuthService";
+import type { AuthContextType } from "../types/global";
 
-const AuthContext = createContext<AuthCointextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(AuthService.getToken());
+
+  useEffect(() => {
+    if(token) AuthService.saveToken(token);
+  }, [token])
 
   const login = async (email: string, password: string) => {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
         const fakeToken = btoa(`${email}:${password}`);
         setToken(fakeToken);
+        AuthService.saveToken(fakeToken);
         resolve();
       },1000)
     })
@@ -18,9 +24,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setToken(null);
+    AuthService.clearToken();
   }
 
-  const value: AuthCointextType = {
+  const value: AuthContextType = {
     isAuthenticated: !!token,
     token,
     login,
