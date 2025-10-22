@@ -5,7 +5,7 @@ import { Sun, Moon } from 'lucide-react';
 
 export const HomePage = () => {
   const { logout } = useAuth();
-  const { visibleItems, allItems, loading, error, observerRef } = useHomeItems();
+  const { visibleItems, allItems, loading, error, setObserverRef } = useHomeItems();
   const { theme, toggleTheme } = useTheme();
 
   if (loading)
@@ -55,7 +55,7 @@ export const HomePage = () => {
         
         {/* div observador cuando entra al final de la lista*/}
         {visibleItems.length < allItems.length && (
-          <div ref={observerRef} className="h-12"></div>
+          <div ref={setObserverRef} className="h-12"></div>
         )}
 
         <p className="text-center text-gray-600 dark:text-gray-400 text-sm mt-8">

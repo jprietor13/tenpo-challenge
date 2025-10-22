@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "../api/axiosConfig";
 import type { Item } from "../types/global";
 
@@ -10,7 +10,30 @@ export const useHomeItems = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const setObserverRef = useCallback((node: HTMLDivElement | null) => {
+    if (observer.current) observer.current.disconnect();
+
+    if (node) {
+      observer.current = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
+          if (entry.isIntersecting) {
+            console.log("➡️ Cargando más elementos...");
+            setPage((prev) => prev + 1);
+          }
+        },
+        {
+          root: null,
+          rootMargin: "200px",
+          threshold: 0.1,
+        }
+      );
+      observer.current.observe(node);
+    }
+  }, []);
 
   // Fetch inicial
   useEffect(() => {
@@ -21,7 +44,7 @@ export const useHomeItems = () => {
         const data = Array.from({ length: 20 }, (_, i) =>
           res.data.map((item: Item) => ({
             ...item,
-            id: item.id + i * 100, // ⚡️ Desfase de 100 por cada lote
+            id: item.id + i * 100,
           }))
         ).flat();
         setAllItems(data);
@@ -35,33 +58,6 @@ export const useHomeItems = () => {
     fetchData();
   }, []);
 
-  // Observer para paginación infinita
-  useEffect(() => {
-    const currentRef = observerRef.current;
-    if (!currentRef) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-          console.log("➡️ Cargando más elementos...");
-          setPage((prev) => prev + 1);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "100px",
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(currentRef);
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
-  }, [observerRef.current]); //reacciona cuando el ref cambia
-
   // Actualizar items visibles
   useEffect(() => {
     if (page > 1) {
@@ -74,5 +70,5 @@ export const useHomeItems = () => {
     }
   }, [page, allItems]);
 
-  return { visibleItems, allItems, loading, error, observerRef };
+  return { visibleItems, allItems, loading, error, setObserverRef };
 };
