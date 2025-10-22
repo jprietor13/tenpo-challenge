@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "TODO_API_URL",
+  baseURL: "https://jsonplaceholder.typicode.com",
 });
 
 axiosInstance.interceptors.request.use((config => {
