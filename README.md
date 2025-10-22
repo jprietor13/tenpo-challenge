@@ -179,6 +179,6 @@ Agregar nuevos módulos solo requiere crear nuevas páginas y rutas dentro del r
 ## 👨‍💻 Autor
 
 **Juan Prieto**  
-Frontend Developer  
-📧 juan.prieto@email.com  
+FullStack Developer  
+📧 jp1739@gmail.com  
 💻 Desarrollado para Tenpo 2025  
