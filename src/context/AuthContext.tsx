@@ -11,6 +11,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if(token) AuthService.saveToken(token);
   }, [token])
 
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "auth_token" && event.newValue === null) {
+        setToken(null);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   const login = async (email: string, password: string) => {
     return new Promise<void>((resolve) => {
       setTimeout(() => {
