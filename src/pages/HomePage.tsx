@@ -1,30 +1,9 @@
-import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import axios from "../api/axiosConfig";
-import type { Item } from "../types/global";
+import { useHomeItems } from "../hooks/useHomeItems";
 
 export const HomePage = () => {
   const { logout } = useAuth();
-  const [items, setItems] = useState<Item>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get("/posts");
-        // JSONPlaceholder devuelve 100 → los duplicamos hasta 2000
-        const data = Array.from({ length: 20 }, () => res.data).flat();
-        setItems(data);
-      } catch {
-        setError("Error al obtener datos");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const { visibleItems, allItems, loading, error, observerRef } = useHomeItems();
 
   if (loading) return <p>Cargando datos...</p>;
   if (error) return <p>{error}</p>;
@@ -40,9 +19,9 @@ export const HomePage = () => {
       </button>
 
       <ul style={{ listStyle: "none", padding: 0 }}>
-        {items.slice(0, 50).map((item) => (
+        {visibleItems.map((item) => (
           <li
-            key={item.id}
+            key={item.id + "-" + Math.random()}
             style={{
               border: "1px solid #ddd",
               padding: "10px",
@@ -54,7 +33,15 @@ export const HomePage = () => {
           </li>
         ))}
       </ul>
-      <p style={{ textAlign: "center" }}>Mostrando 50 de {items.length} elementos</p>
+
+      {/* div observador cuando entra al final de la lista*/}
+      {visibleItems.length < allItems.length && (
+        <div ref={observerRef} style={{ height: "40px" }} />
+      )}
+
+      <p style={{ textAlign: "center" }}>
+        Mostrando {visibleItems.length} de {allItems.length} elementos
+      </p>
     </div>
   );
 };
