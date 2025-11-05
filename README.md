@@ -1,7 +1,6 @@
 # 🧭 Tenpo Challenge — React + TypeScript
 
-Este proyecto implementa una aplicación **SPA en React + TypeScript** que cumple con los criterios del challenge técnico.  
-Incluye autenticación simulada, persistencia de token, contexto público/privado, fetch de datos con paginación infinita e integración de **TailwindCSS** con soporte **dark/light mode**.
+Este proyecto implementa una aplicación **SPA en React + TypeScript** que incluye autenticación simulada, persistencia de token, contexto público/privado, fetch de datos con paginación infinita e integración de **TailwindCSS** con soporte **dark/light mode**.
 
 ---
 
